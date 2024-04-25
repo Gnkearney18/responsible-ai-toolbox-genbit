@@ -266,27 +266,29 @@ class MetricsCalculation:
         total_non_binary_freq_count = 0
         total_trans_freq_count = 0
         total_cis_freq_count = 0
-        for token, counts in self._cooccurrence_matrix.items():
-            if token in self._female_gendered_words:
-                total_female_freq_count += counts["count"]
-            if token in self._male_gendered_words:
-                total_male_freq_count += counts["count"]
-            if token in self._non_binary_gendered_words:
-                total_non_binary_freq_count += counts["count"]
-                if token not in self._trans_gendered_words: # avoid double counting
+        with open("femaleStats.txt", "w") as f:
+            for token, counts in self._cooccurrence_matrix.items():
+                if token in self._female_gendered_words:
+                    total_female_freq_count += counts["count"]
+                    print(token, file=f)
+                if token in self._male_gendered_words:
+                    total_male_freq_count += counts["count"]
+                if token in self._non_binary_gendered_words:
+                    total_non_binary_freq_count += counts["count"]
+                    if token not in self._trans_gendered_words: # avoid double counting
+                        total_trans_freq_count += counts["count"]
+                if token in self._trans_gendered_words:
                     total_trans_freq_count += counts["count"]
-            if token in self._trans_gendered_words:
-                total_trans_freq_count += counts["count"]
-            if token in self._cis_gendered_words:
-                total_cis_freq_count += counts["count"]
-        results = {
-            "female": total_female_freq_count,
-            "male": total_male_freq_count,
-            "non-binary": total_non_binary_freq_count,
-            "trans": total_trans_freq_count,
-            "cis": total_cis_freq_count,
-            }
-        return results
+                if token in self._cis_gendered_words:
+                    total_cis_freq_count += counts["count"]
+            results = {
+                "female": total_female_freq_count,
+                "male": total_male_freq_count,
+                "non-binary": total_non_binary_freq_count,
+                "trans": total_trans_freq_count,
+                "cis": total_cis_freq_count,
+                }
+            return results
 
     def _calculate_metrics(self):
         overall_metrics = OverallGenderStatistics()
